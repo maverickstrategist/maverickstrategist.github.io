@@ -553,3 +553,148 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+// ── POPUP-AWARE ENGINE TRIGGERS ───────────────────────────────────────────────
+
+// Override the run buttons to go through popup first
+function runSettlorEngineWithPopup() {
+  showEnginePopup(function(user) {
+    runSettlorEngine(user);
+  });
+}
+
+function runTrusteeEngineWithPopup() {
+  showEnginePopup(function(user) {
+    runTrusteeEngine(user);
+  });
+}
+
+// ── PARTIAL RESULT WRAPPER ────────────────────────────────────────────────────
+function wrapPartialResult(fullHTML) {
+  return `
+    ${fullHTML.substring(0, Math.floor(fullHTML.length * 0.45))}
+    <div style="
+      background:linear-gradient(to bottom, rgba(255,255,255,0), #fff);
+      height:80px;margin-top:-80px;position:relative;z-index:2;
+    "></div>
+    <div style="
+      background:#1a1a2e;color:#fff;
+      border-radius:10px;padding:28px 24px;
+      text-align:center;margin-top:16px;
+    ">
+      <div style="font-size:1.1rem;font-weight:bold;color:#c9a84c;margin-bottom:10px;">
+        🔒 Full Analysis Locked
+      </div>
+      <p style="color:#99aabb;font-size:0.95rem;margin-bottom:20px;line-height:1.6;">
+        You are seeing a partial result. Readers of <em>The New Trustees</em> unlock the complete jurisdiction recommendation, full risk assessment, and all action steps.
+      </p>
+      <a href="https://www.amazon.com/dp/B0GZMZQZ7Q" target="_blank" style="
+        display:inline-block;
+        background:#c9a84c;color:#1a1a2e;
+        padding:12px 28px;border-radius:8px;
+        font-weight:700;font-size:0.95rem;
+        text-decoration:none;margin-bottom:12px;
+      ">Get The Book on Amazon — $9.99 →</a>
+      <p style="color:#556;font-size:0.8rem;margin-top:8px;">
+        Already bought it? <a href="#" onclick="resetSession()" style="color:#c9a84c;">Click here to update your profile.</a>
+      </p>
+    </div>
+  `;
+}
+
+function resetSession() {
+  sessionStorage.removeItem('ms_session');
+  location.reload();
+}
+
+// ── UPDATE ENGINE FUNCTIONS TO ACCEPT USER ────────────────────────────────────
+
+const _origRunSettlor = runSettlorEngine;
+window.runSettlorEngine = function(user) {
+  // If called from button directly (no user), trigger popup
+  if (!user || typeof user !== 'object') {
+    runSettlorEngineWithPopup();
+    return;
+  }
+
+  const priority = document.getElementById('s-priority').value;
+  const assets = document.getElementById('s-assets').value;
+  const religion = document.getElementById('s-religion').value;
+  const timeline = document.getElementById('s-timeline').value;
+  const digital = document.getElementById('s-digital').value;
+  const notes = document.getElementById('s-notes').value.trim();
+  const situation = document.getElementById('s-situation').value;
+
+  if (!priority || !assets || !timeline) {
+    alert('Please fill in Priority, Asset Type, and Timeline before running the engine.');
+    return;
+  }
+
+  const btn = document.getElementById('s-btn');
+  btn.innerHTML = '<span class="spinner"></span> Analysing...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    const scores = scoreJurisdictions(priority, assets, religion, timeline, digital, situation);
+    const top3 = scores.slice(0, 3);
+    const out = document.getElementById('s-output');
+    out.classList.add('visible');
+
+    renderSettlorOutput(top3, priority, assets, religion, timeline, digital, notes, situation);
+
+    // If not a reader, wrap with partial
+    if (!user.has_read) {
+      out.innerHTML = wrapPartialResult(out.innerHTML);
+    }
+
+    // Update counter
+    const counter = document.getElementById('engine-counter-1');
+    if (counter) counter.textContent = getCounter();
+
+    btn.innerHTML = 'Run Analysis';
+    btn.disabled = false;
+    out.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 1200);
+};
+
+const _origRunTrustee = runTrusteeEngine;
+window.runTrusteeEngine = function(user) {
+  if (!user || typeof user !== 'object') {
+    runTrusteeEngineWithPopup();
+    return;
+  }
+
+  const clientType = document.getElementById('t-client').value;
+  const assets = document.getElementById('t-assets').value;
+  const religion = document.getElementById('t-religion').value;
+  const complexity = document.getElementById('t-complexity').value;
+  const concern = document.getElementById('t-concern').value;
+  const notes = document.getElementById('t-notes').value.trim();
+
+  if (!clientType || !assets || !complexity) {
+    alert('Please fill in Client Type, Asset Profile, and Complexity before running the engine.');
+    return;
+  }
+
+  const btn = document.getElementById('t-btn');
+  btn.innerHTML = '<span class="spinner"></span> Generating Recommendation...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    const out = document.getElementById('t-output');
+    out.classList.add('visible');
+    renderTrusteeOutput(clientType, assets, religion, complexity, concern, notes);
+
+    if (!user.has_read) {
+      out.innerHTML = wrapPartialResult(out.innerHTML);
+    }
+
+    const counter = document.getElementById('engine-counter-2');
+    if (counter) counter.textContent = getCounter();
+
+    btn.innerHTML = 'Generate Professional Recommendation';
+    btn.disabled = false;
+    out.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 1400);
+};
+
