@@ -158,7 +158,7 @@ window.submitPopup = function() {
   saveUser(userData);
   setSession(userData);
 
-  fetch('https://formspree.io/f/YOUR_FORM_ID', {
+  fetch('https://formspree.io/f/xjglalvd', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name, email, company, type: typeEl.value, has_read: readEl.value, timestamp: new Date().toISOString() })
