@@ -57,14 +57,14 @@ function createPopupHTML() {
     ">
       <div style="
         background:#fff;border-radius:14px;
-        max-width:480px;width:100%;
+        max-width:480px;width:100%;max-height:90vh;overflow-y:auto;
         box-shadow:0 20px 60px rgba(0,0,0,0.4);
         overflow:hidden;
       ">
         <!-- Header -->
-        <div style="background:#1a1a2e;padding:28px 32px 24px;">
+        <div style="background:#1a1a2e;padding:16px 24px 12px;">
           <div style="font-size:0.72rem;letter-spacing:3px;text-transform:uppercase;color:#c9a84c;margin-bottom:8px;">MAVERICK STRATEGIST</div>
-          <div style="font-family:Georgia,serif;font-size:1.4rem;color:#fff;font-weight:bold;line-height:1.3;">
+          <div style="font-family:Georgia,serif;font-size:1.1rem;color:#fff;font-weight:bold;line-height:1.3;">
             Access the Strategy Engine
           </div>
           <div style="font-size:0.88rem;color:#8899bb;margin-top:8px;">
@@ -74,8 +74,8 @@ function createPopupHTML() {
         </div>
 
         <!-- Form -->
-        <div style="padding:28px 32px;">
-          <div style="margin-bottom:16px;">
+        <div style="padding:16px 24px;">
+          <div style="margin-bottom:10px;">
             <label style="display:block;font-weight:600;font-size:0.88rem;color:#1a1a2e;margin-bottom:6px;">Full Name *</label>
             <input id="popup-name" type="text" placeholder="Your full name"
               style="width:100%;padding:10px 14px;border:1.5px solid #dde2ea;border-radius:8px;font-size:0.95rem;outline:none;transition:border-color .2s;"
@@ -83,7 +83,7 @@ function createPopupHTML() {
             />
           </div>
 
-          <div style="margin-bottom:16px;">
+          <div style="margin-bottom:10px;">
             <label style="display:block;font-weight:600;font-size:0.88rem;color:#1a1a2e;margin-bottom:6px;">Email Address *</label>
             <input id="popup-email" type="email" placeholder="your@email.com"
               style="width:100%;padding:10px 14px;border:1.5px solid #dde2ea;border-radius:8px;font-size:0.95rem;outline:none;transition:border-color .2s;"
@@ -91,7 +91,7 @@ function createPopupHTML() {
             />
           </div>
 
-          <div style="margin-bottom:16px;">
+          <div style="margin-bottom:10px;">
             <label style="display:block;font-weight:600;font-size:0.88rem;color:#1a1a2e;margin-bottom:6px;">Company Name <span style="color:#999;font-weight:400;">(optional for individuals)</span></label>
             <input id="popup-company" type="text" placeholder="Your company or firm"
               style="width:100%;padding:10px 14px;border:1.5px solid #dde2ea;border-radius:8px;font-size:0.95rem;outline:none;transition:border-color .2s;"
@@ -99,13 +99,13 @@ function createPopupHTML() {
             />
           </div>
 
-          <div style="margin-bottom:16px;">
+          <div style="margin-bottom:10px;">
             <label style="display:block;font-weight:600;font-size:0.88rem;color:#1a1a2e;margin-bottom:8px;">I am a *</label>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
               <label id="type-individual-label" style="
                 display:flex;align-items:center;gap:10px;
                 border:1.5px solid #dde2ea;border-radius:8px;
-                padding:12px 14px;cursor:pointer;transition:all .2s;
+                padding:8px 12px;cursor:pointer;transition:all .2s;
               ">
                 <input type="radio" name="popup-type" value="individual" id="type-individual"
                   onchange="selectType('individual')"
@@ -119,7 +119,7 @@ function createPopupHTML() {
               <label id="type-corporate-label" style="
                 display:flex;align-items:center;gap:10px;
                 border:1.5px solid #dde2ea;border-radius:8px;
-                padding:12px 14px;cursor:pointer;transition:all .2s;
+                padding:8px 12px;cursor:pointer;transition:all .2s;
               ">
                 <input type="radio" name="popup-type" value="corporate" id="type-corporate"
                   onchange="selectType('corporate')"
@@ -133,13 +133,13 @@ function createPopupHTML() {
             </div>
           </div>
 
-          <div style="margin-bottom:24px;">
+          <div style="margin-bottom:12px;">
             <label style="display:block;font-weight:600;font-size:0.88rem;color:#1a1a2e;margin-bottom:8px;">Have you read The New Trustees? *</label>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
               <label id="read-yes-label" style="
                 display:flex;align-items:center;gap:10px;
                 border:1.5px solid #dde2ea;border-radius:8px;
-                padding:12px 14px;cursor:pointer;transition:all .2s;
+                padding:8px 12px;cursor:pointer;transition:all .2s;
               ">
                 <input type="radio" name="popup-read" value="yes" id="read-yes"
                   onchange="selectRead('yes')"
@@ -153,7 +153,7 @@ function createPopupHTML() {
               <label id="read-no-label" style="
                 display:flex;align-items:center;gap:10px;
                 border:1.5px solid #dde2ea;border-radius:8px;
-                padding:12px 14px;cursor:pointer;transition:all .2s;
+                padding:8px 12px;cursor:pointer;transition:all .2s;
               ">
                 <input type="radio" name="popup-read" value="no" id="read-no"
                   onchange="selectRead('no')"
