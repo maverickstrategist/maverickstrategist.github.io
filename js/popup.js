@@ -57,7 +57,7 @@ function createPopupHTML() {
     ">
       <div style="
         background:#fff;border-radius:14px;
-        max-width:480px;width:100%;max-height:90vh;overflow-y:auto;
+        max-width:480px;width:100%;max-height:92vh;overflow-y:scroll;
         box-shadow:0 20px 60px rgba(0,0,0,0.4);
         overflow:hidden;
       ">
