@@ -230,6 +230,10 @@ footer a{color:var(--gold);}
   .feat{padding:30px 24px;}
 }
 
+/* Mobile fix: stack hard-coded inline multi-column grids so cards don't clip */
+@media (max-width:768px){
+  [style*="grid-template-columns"]{grid-template-columns:1fr !important;}
+}
 </style>
 </head>
 <body>
