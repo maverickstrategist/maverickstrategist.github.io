@@ -80,7 +80,9 @@ h1.ht em{font-style:italic;color:var(--gold-light);}
 .lc{width:14px;height:16px;border-bottom:1px solid #2a6a44;flex-shrink:0;}
 .ln{background:#0d1a12;color:#6ec496;border:0.5px solid #2a6a44;padding:4px 10px;font-size:10px;font-family:var(--font-mono);white-space:nowrap;}
 .ln:hover{background:#162a1e;}
-.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);}
+.dgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);}
+.dradar{background:var(--surface);padding:1.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.dradar-title{font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border);width:100%;}
 .db{background:var(--surface);padding:1.5rem;}
 .dbt{font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border);}
 .di{margin-bottom:14px;}
@@ -610,6 +612,44 @@ const DIAG=[
 ];
 const TIERS=[[76,100,"Sovereign Architecture","Maintain, adapt annually, prepare next generation for stewardship"],[51,75,"Architecturally Capable","Close specific branch gaps; run all four integration stress-tests"],[26,50,"Partially Distributed","Urgently address Branches II and IV; establish second Settlement Bloc"],[0,25,"Structurally Exposed","Begin Branch I immediately; commission gap analysis within 30 days"]];
 const sc={};
+const BRANCH_MAX=[30,25,20,15,10];
+const BRANCH_SHORT=["I","II","III","IV","V"];
+function drawRadar(){
+  const NS="http://www.w3.org/2000/svg";
+  const cx=120,cy=120,r=85,sides=5;
+  const scores=DIAG.map((b,bi)=>{
+    const items=b.items.length;
+    const raw=b.items.reduce((s,_,ii)=>(sc[bi+"-"+ii]||0)+s,0);
+    return raw/BRANCH_MAX[bi];
+  });
+  const cell=document.getElementById("dradar-cell");
+  if(!cell)return;
+  cell.innerHTML="<div class='dbt dradar-title'>Architecture Profile</div>";
+  const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 240 240");svg.setAttribute("width","220");svg.setAttribute("height","220");
+  const gold="#b8962e",goldDim="#7a6220",border="rgba(255,255,255,0.06)",text="#d4d0c8",dimText="#7a7870";
+  function pt(i,frac){const a=(Math.PI*2*i/sides)-Math.PI/2;return[cx+frac*r*Math.cos(a),cy+frac*r*Math.sin(a)];}
+  // grid rings
+  [0.25,0.5,0.75,1].forEach(frac=>{
+    const pts=Array.from({length:sides},(_,i)=>pt(i,frac).join(",")).join(" ");
+    const poly=document.createElementNS(NS,"polygon");poly.setAttribute("points",pts);poly.setAttribute("fill","none");poly.setAttribute("stroke",border);poly.setAttribute("stroke-width","1");svg.appendChild(poly);
+  });
+  // spokes
+  Array.from({length:sides},(_,i)=>{
+    const [x2,y2]=pt(i,1);
+    const line=document.createElementNS(NS,"line");line.setAttribute("x1",cx);line.setAttribute("y1",cy);line.setAttribute("x2",x2);line.setAttribute("y2",y2);line.setAttribute("stroke",border);line.setAttribute("stroke-width","1");svg.appendChild(line);
+  });
+  // filled area
+  const pts=scores.map((s,i)=>pt(i,Math.max(s,0.04)).join(",")).join(" ");
+  const poly=document.createElementNS(NS,"polygon");poly.setAttribute("points",pts);poly.setAttribute("fill","rgba(184,150,46,0.15)");poly.setAttribute("stroke",gold);poly.setAttribute("stroke-width","1.5");svg.appendChild(poly);
+  // dots
+  scores.forEach((s,i)=>{const[x,y]=pt(i,Math.max(s,0.04));const dot=document.createElementNS(NS,"circle");dot.setAttribute("cx",x);dot.setAttribute("cy",y);dot.setAttribute("r","3.5");dot.setAttribute("fill",gold);svg.appendChild(dot);});
+  // labels
+  BRANCH_SHORT.forEach((lbl,i)=>{
+    const[x,y]=pt(i,1.22);
+    const t=document.createElementNS(NS,"text");t.setAttribute("x",x);t.setAttribute("y",y);t.setAttribute("text-anchor","middle");t.setAttribute("dominant-baseline","middle");t.setAttribute("font-size","10");t.setAttribute("font-family","DM Mono,monospace");t.setAttribute("fill",dimText);t.textContent=lbl;svg.appendChild(t);
+  });
+  cell.appendChild(svg);
+}
 function buildDiag(){
   const g=document.getElementById("dgrid");
   DIAG.forEach((b,bi)=>{
@@ -629,6 +669,9 @@ function buildDiag(){
     });
     g.appendChild(cell);
   });
+  // 6th cell: radar chart
+  const rc=document.createElement("div");rc.className="db dradar";rc.id="dradar-cell";g.appendChild(rc);
+  drawRadar();
 }
 function calcScore(){
   const total=Object.values(sc).reduce((a,b)=>a+b,0);
@@ -636,6 +679,7 @@ function calcScore(){
   document.getElementById("tfill").style.width=total+"%";
   const t=TIERS.find(([lo,hi])=>total>=lo&&total<=hi);
   document.getElementById("dtier").textContent=t?t[2]+": "+t[3]:"Rate all items above.";
+  drawRadar();
 }
 function resetD(){Object.keys(sc).forEach(k=>sc[k]=0);document.querySelectorAll(".sb3").forEach((b,i)=>{b.classList.toggle("sel",i%6===0);});calcScore();}
 buildDiag();
